@@ -28,14 +28,18 @@ class MockRestApiServer {
         var corsOptionsDelegate = (req, callback) => {
             callback(null,{ origin: true, credentials : true});
         };
-        responseApi.options("/add",cors(corsOptionsDelegate));
-
+        responseApi.options("/*",cors(corsOptionsDelegate));
         responseApi.use(bodyParser.json());
-
         responseApi.post("/add",(request,response) => {
             var json = request.body;
             this.responseHandler.mapResponse(json.path, json.method, json.responseHttpStatus, json.responseBody, json.responseHeaders || {});
             response.set("Access-Control-Allow-Origin",request.headers.origin);
+            response.set("Content-Type", "application/json");
+            response.send('{"result" : "OK"}');
+        });
+        responseApi.get("/reset",(request,response)=>{
+            this.responseHandler.reset();
+            response.status(200);
             response.set("Content-Type", "application/json");
             response.send('{"result" : "OK"}');
         });

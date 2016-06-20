@@ -5,36 +5,45 @@ describe("Basic Request/Response Test",()=>{
 
     var testCall;
 
-    beforeEach((done)=>{
-        var mockApiPath = "/mock-api";
-        mockRequest("http://localhost:8999","/responses", mockApiPath)
+    var request;
+    beforeEach(()=>{
+        request = mockRequest("http://localhost:8999","/responses", "/mock-api");
+    });
+    afterEach((done)=>{
+        request.reset().then(()=>{
+            done();
+        }).catch( err=> {
+            assert(false,"error resetting mock server " + err);
+        });
+    })
+
+    it("Test basic request to mocked endpoint", (done)=>{
+
+        var expectedResponse = { testingNumber : 1, testingString : "test", nested : { variable : "var"}};
+
+
+        request
             .path("/testing/1")
             .status(200)
             .method("POST")
-            .body({ testingNumber : 1, testingString : "test", nested : { variable : "var"}})
+            .body(expectedResponse)
             .execute()
             .then( apiCall => {
-                testCall = apiCall;
-                done();
+                apiCall().then( response => {
+                    console.log(response.data);
+                    expect(expectedResponse).to.deep.equal(response.data)
+                    done();
+                }).catch(err => {
+                    console.log("ERROR", err);
+                    assert(false,"error thrown =" + err);
+                    done();
+                });
             }).catch(err=>{
                 console.log("ERROR =" , err);
-                done();
-        });
-
-    });
-
-
-    it("Test basic request to mocked endpoint", (done)=>{
-        if(testCall) {
-            console.log("TEST CALL = ", testCall);
-            testCall().then( response => {
-                console.log("TEST CALL RESPONSE = ", response);
-                done();
-            }).catch(err => {
-                console.log("ERR = ", err);
+                assert(false,"error thrown =" + err);
                 done();
             });
-        }
+
 
     });
 });

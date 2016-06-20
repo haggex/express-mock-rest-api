@@ -51,6 +51,19 @@ export class TestRequest {
             });
         });
     }
+    reset() {
+        return new Promise((resolve,reject)=>{
+            var url = this.serverUrl + this.adminPath + "/reset";
+            console.log("Resetting mock server", url);
+            axios.get(url,this.pathResponse,{
+                responseType: 'json'
+            }).then(()=>{
+                resolve();
+            }).catch(err => {
+                reject(err);
+            });
+        });
+    }
     createApiCall() {
         return ((requestUrl,pathResponse)=>{
             return () => {
