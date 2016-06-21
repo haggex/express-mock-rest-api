@@ -33,7 +33,7 @@ describe("Basic Request/Response Test",()=>{
             .execute()
             .then( info => {
                 return http.doPost(info.url,testRequest).then( response => {
-                    expect(expectedResponse).to.deep.equal(response.data);
+                    expect(expectedResponse).to.deep.equal(response);
                 });
             });
     });
@@ -57,19 +57,19 @@ describe("Basic Request/Response Test",()=>{
                 //call the mocked api endpoints 3 times expecting 2 different responses (first, second, second)
                 return Promise.all([
                     http.doPost(infos[0].url,testRequest).then( response => {
-                        expect(expectedResponse).to.deep.equal(response.data);
+                        expect(expectedResponse).to.deep.equal(response);
                     }),
                     http.doPost(infos[1].url,testRequest).then( response => {
-                        expect(expectedResponse2).to.deep.equal(response.data);
+                        expect(expectedResponse2).to.deep.equal(response);
                     }),
                     http.doPost(infos[1].url,testRequest).then( response => {
-                        expect(expectedResponse2).to.deep.equal(response.data);
+                        expect(expectedResponse2).to.deep.equal(response);
                     })
                 ]);
             }).then( test => {
                 //verify the requests that where made to the mock api (mapped by responses)
                 return mockServerApi.getResponses().then(res => {
-                    var responses = res.data;
+                    var responses = res;
                     expect(responses.length).to.equal(2);
                     expect(responses[0].requests.length).to.equal(1);
                     expect(responses[0].requests[0].requestIndex).to.equal(0);
@@ -79,7 +79,7 @@ describe("Basic Request/Response Test",()=>{
                 })
             }).then( t => {
                 return mockServerApi.getResponses("/testing/1", "POST", 200).then(responses => {
-                    expect(responses.data.length).to.equal(2);
+                    expect(responses.length).to.equal(2);
                 })
             });
     });
@@ -104,16 +104,16 @@ describe("Basic Request/Response Test",()=>{
                 //call the mocked api endpoints 3 times expecting 2 different responses (first, second, second)
                 return Promise.all([
                     http.doPost(infos[0].url,testRequest).then( response => {
-                        expect(expectedResponse).to.deep.equal(response.data);
+                        expect(expectedResponse).to.deep.equal(response);
                     }),
                     http.doPost(infos[1].url,testRequest2).then( response => {
-                        expect(expectedResponse2).to.deep.equal(response.data);
+                        expect(expectedResponse2).to.deep.equal(response);
                     })
                 ]);
             }).then( test => {
                 //verify the requests that where made to the mock api (mapped by responses)
                 return mockServerApi.getResponses().then(res => {
-                    var responses = res.data;
+                    var responses = res;
                     expect(responses.length).to.equal(2);
                     expect(responses[0].requests.length).to.equal(1);
                     expect(responses[0].requests[0].requestIndex).to.equal(0);
@@ -124,7 +124,7 @@ describe("Basic Request/Response Test",()=>{
                 })
             }).then( t => {
                 return mockServerApi.getResponses("/another/1", "POST", 200).then(responses => {
-                    expect(responses.data.length).to.equal(1);
+                    expect(responses.length).to.equal(1);
                 })
             });
     });
@@ -148,7 +148,7 @@ describe("Basic Request/Response Test",()=>{
             }).then( test => {
                 //verify the requests that where made to the mock api (mapped by responses)
                 return mockServerApi.getResponses().then(res => {
-                    var responses = res.data;
+                    var responses = res;
                     expect(responses.length).to.equal(1);
                     expect(responses[0].requests.length).to.equal(1);
                     expect(responses[0].requests[0].body).to.deep.equal(testRequest);

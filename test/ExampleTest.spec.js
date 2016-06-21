@@ -1,30 +1,14 @@
-# express-mock-rest-api
-
-### Launching the Mock server ###
-
-```javascript
-var MockRestApiServer = require("express-mock-rest-api").MockRestApiServer;
-var server = new MockRestApiServer(8999,"/mock-api",{});
-server.start();
-```
-
-
-### Writing a integration test for your application ###
-
-In this example I'm using the utils provided in "mock-response-handler". It's a http client calling the mock server rest-api.
-```javascript
-
 import {MockServerApi} from "mock-response-handler";
 import * as axios from "axios";
 
 var expect = require('chai').expect;
 
-```
 
-To be able to use the utils provided in the mock-response-handler we need to create an HttpHandler
-The HttpHandler need to implement two methods: doGet(url,headers) & doPost(url,entity,headers)
-In this example I'm using axios http library
-```javascript
+/**
+ * To be able to use the utils provided in the mock-response-handler we need to create an HttpHandler
+ * The HttpHandler need to implement two methods: doGet(url,headers) & doPost(url,entity,headers)
+ * In this example I'm using axios http library
+ */
 class ExampleHttpClient {
     /**
      *
@@ -57,10 +41,10 @@ class ExampleHttpClient {
     }
 }
 
-```
 
-Sample service, what you eventually will test in your real code
-```javascript
+/**
+ * Sample service, what you eventually will test in your real code
+ */
 class SampleService {
     fetchUsers() {
         return new Promise((resolve,reject)=>{
@@ -72,11 +56,10 @@ class SampleService {
         })
     }
 }
-```
 
-
-Mocha test using chai
-```javascript
+/**
+ * Mocha test using chai
+ */
 describe("Sample test using express mock rest api",()=>{
 
     var testCall;
@@ -114,5 +97,3 @@ describe("Sample test using express mock rest api",()=>{
     });
 
 });
-
-```
