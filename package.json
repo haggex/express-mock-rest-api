@@ -2,7 +2,7 @@
   "name": "express-mock-rest-api",
   "version": "0.1.0",
   "description": "Express mock rest api server for testing ",
-  "main": "lib/index.js",
+  "main": "lib/express-mock-rest-api.js",
   "scripts": {
     "test": "npm run build && npm run start-test-server &&  npm run execute-tests && npm run stop-test-server",
     "test-watch": "npm run build && npm run start-test-server && npm run execute-tests-watch",
@@ -28,7 +28,8 @@
     "body-parser": "^1.15.1",
     "cors": "^2.7.1",
     "es6-shim": "^0.35.1",
-    "express": "^4.13.4"
+    "express": "^4.13.4",
+    "mock-response-handler" : "0.1.0"
   },
   "devDependencies": {
     "axios": "^0.12.0",

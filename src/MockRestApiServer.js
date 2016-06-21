@@ -1,10 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import {ResponseHandler} from "./ResponseHandler";
+import {ResponseHandler} from  "mock-response-handler";
 
 
-class MockRestApiServer {
+export class MockRestApiServer {
 
     constructor(port,mockApiPath,options) {
         this.started = false;
@@ -21,34 +21,38 @@ class MockRestApiServer {
     }
     start() {
         var app = express();
-        app.disable('etag');
+        var corsOptionsDelegate = (req, callback) => {
+            console.log("CORS DELEGATE");
+            callback(null,{ origin: true, credentials : true});
+        };
+        app.use(cors(corsOptionsDelegate));
+        app.set('etag', false);
         app.set("port", this.port);
 
         var responseApi = express();
-        var corsOptionsDelegate = (req, callback) => {
-            callback(null,{ origin: true, credentials : true});
-        };
-        responseApi.options("/*",cors(corsOptionsDelegate));
         responseApi.use(bodyParser.json());
         responseApi.post("/add",(request,response) => {
             var json = request.body;
             this.responseHandler.mapResponse(json.path, json.method, json.responseHttpStatus, json.responseBody, json.responseHeaders || {});
-            response.set("Access-Control-Allow-Origin",request.headers.origin);
-            response.set("Content-Type", "application/json");
+            this.setCacheHeaders(response);
             response.send('{"result" : "OK"}');
+        });
+        responseApi.post("/list",(request,response) => {
+            var json = request.body;
+            var requests = this.responseHandler.getResponses(json.path, json.method,json.status)
+            this.setCacheHeaders(response);
+            response.json(requests);
         });
         responseApi.get("/reset",(request,response)=>{
             this.responseHandler.reset();
             response.status(200);
+            this.setCacheHeaders(response);
             response.set("Content-Type", "application/json");
             response.send('{"result" : "OK"}');
         });
 
-
         var mockApi = express();
-
-        mockApi.use(cors(corsOptionsDelegate));
-        mockApi.disable('etag');
+        mockApi.use(bodyParser.json());
         mockApi.post("/*",(request,response)=>{
             console.log("Handle POST");
             this.handleRequest(request, "POST", response);
@@ -92,14 +96,24 @@ class MockRestApiServer {
                     response.set(x, response.responseHeaders[x]);
                 }
             }
-            response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            response.header('Expires', '-1');
-            response.header('Pragma', 'no-cache');
+            this.setCacheHeaders(response);
             console.log("Sending response = ", apiResponse.responseBody);
-            response.status(apiResponse.responseHttpStatus).json(apiResponse.responseBody);
+            response.status(apiResponse.responseHttpStatus);
+            if(apiResponse.responseBody) {
+                response.json(apiResponse.responseBody);
+            } else {
+                response.send();
+            }
+
         } else {
             this.notFound(response, request);
         }
+    }
+
+    setCacheHeaders(response) {
+        response.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        response.header('Expires', '-1');
+        response.header('Pragma', 'no-cache');
     }
 
     notFound(response, request) {
@@ -108,4 +122,3 @@ class MockRestApiServer {
 
 }
 
-module.exports = MockRestApiServer;

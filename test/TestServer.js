@@ -1,8 +1,9 @@
-var mockServer = require("../lib/express-mock-rest-api");
+var MockRestApiServer = require("../lib/express-mock-rest-api").MockRestApiServer;
 
-mockServer("/mock-api",8999,{
+var server = new MockRestApiServer(8999,"/mock-api",{
     useRequestHostAsAllowOrigin : true,
     headers : {
         "Access-Control-Allow-Headers" : ""
     }
 });
+server.start();

@@ -16,7 +16,9 @@ var config = {
     externals : {
         express : "express",
         "body-parser" : "body-parser",
-        "cors" : "cors"
+        "cors" : "cors",
+        "es6-shim" : "es6-shim",
+        "mock-response-handler" : "mock-response-handler"
     },
     module: {
         loaders: [

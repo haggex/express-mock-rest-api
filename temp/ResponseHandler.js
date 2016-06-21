@@ -8,6 +8,21 @@ export class PathResponse {
         this.responseHeaders = headers;
         this.requests = [];
     }
+    setPath(path) {
+        return new PathResponse(path,this.method, this.responseHttpStatus, this.responseBody, this.responseHeaders);
+    }
+    setMethod(method) {
+        return new PathResponse(this.path,method, this.responseHttpStatus, this.responseBody, this.responseHeaders);
+    }
+    setResponseHttpStatus(status) {
+        return new PathResponse(this.path,this.method, status, this.responseBody, this.responseHeaders);
+    }
+    setResponseBody(body) {
+        return new PathResponse(this.path,this.method, this.responseHttpStatus,body, this.responseHeaders);
+    }
+    setResponseHeaders(headers) {
+        return new PathResponse(this.path,this.method, this.responseHttpStatus, this.responseBody, headers);
+    }
     onRequest(pathRequest) {
         this.requests.push(pathRequest);
     }
@@ -108,7 +123,7 @@ export class ResponseHandler {
         return mappings.map(m => m.method).join(",");
     }
 
-    getRequestsForMappings(path,method,status) {
+    getResponses(path, method, status) {
         var requests = [];
         var mappings = this.pathMappings.filter(pathMapping => {
             if(path && method) {
@@ -128,14 +143,7 @@ export class ResponseHandler {
                 return response.responseHttpStatus == status;
             });
         }
-        responses.forEach(response => {
-            requests = requests.concat(response.requests);
-        });
-        responses.sort((a,b)=>{
-            return a.requestIndex - b.requestIndex;
-        });
-
-        return requests;
+        return responses;
 
     }
 
