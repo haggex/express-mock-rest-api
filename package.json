@@ -8,7 +8,7 @@
     "test-watch": "npm run build && npm run start-test-server && npm run execute-tests-watch",
     "execute-tests-watch": "node node_modules/karma/bin/karma start ./karma.watch.conf.js",
     "execute-tests": "node node_modules/karma/bin/karma start ./karma.conf.js",
-    "start-test-server": "node node_modules/forever/bin/forever start test/TestServer.js",
+    "start-test-server": "node node_modules/forever/bin/forever --minUptime 100 --spinSleepTime 100 start test/TestServer.js ",
     "stop-test-server": "node node_modules/forever/bin/forever stop test/TestServer.js",
     "build": "webpack --config ./webpack.dev.js --progress --colors",
     "test-app": "npm run build && node lib/test/js/TestServer.js",
