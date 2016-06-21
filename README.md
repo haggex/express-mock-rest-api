@@ -16,8 +16,7 @@ In this example I'm using the utils provided in "mock-response-handler". It's a 
 
 import {MockServerApi} from "mock-response-handler";
 import * as axios from "axios";
-
-var expect = require('chai').expect;
+import {expect} from "chai";
 
 ```
 
