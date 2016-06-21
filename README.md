@@ -105,11 +105,34 @@ describe("Sample test using express mock rest api",()=>{
         return mockServerApi.reset();
     });
 
-    it("Test sampele request to mocked endpoint", ()=>{
+    it("Test sample request to mocked endpoint", ()=>{
         return sampleService.fetchUsers().then( users => {
             expect(users.length).to.equal(2);
             expect(users[0].username).to.equal("Pete");
         });
+    });
+
+    it("Example on how to verify the request", ()=>{
+        return sampleService.fetchUsers().then( users => {
+            expect(users.length).to.equal(2);
+            expect(users[0].username).to.equal("Pete");
+        }).then(() => {
+            //verify the request your application (SampleService) sent
+            return mockServerApi.getResponses("/users","GET").then( responses => {
+                //all the responses that you have mocked
+                expect(responses.length).to.equal(1);
+                expect(responses[0].responseHttpStatus).to.equal(200);
+
+                //all requests that have been mapped to this response
+                expect(responses[0].requests.length).to.equal(1);
+                expect(responses[0].requests[0].method).to.equal("GET");
+            });
+        }).then(() => {
+            //since we only have one mocked response this will have the same responses as previous .then
+            return mockServerApi.getResponses().then( responses => {
+                expect(responses.length).to.equal(1);
+            });
+        });;
     });
 
 });
